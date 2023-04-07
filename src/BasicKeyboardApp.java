@@ -61,13 +61,29 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
     //button
     public Button button1;
 
+    public Image backgroundpic;
+
+    public Image endgamepic;
+
 
     //timer variables
+
+    public Image explosionPic;
+    public Image DuckPic;
     public long startTime;
     public long currentTime;
     public long elapsedTime;
 
+    public int amountClicked;
+
+
+    public Duck theDuck;
+
+    public Duck duck;
+
     public boolean startTimer;
+
+    public Duck[] ducks;
 
 
     // Main method definition
@@ -88,11 +104,23 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
         canvas.addMouseListener(this);
         canvas.addMouseMotionListener(this);
         canvas.addKeyListener(this);
-
+        backgroundpic = Toolkit.getDefaultToolkit().getImage("duck_background.png");
+        DuckPic = Toolkit.getDefaultToolkit().getImage("Duck.png");
+        explosionPic = Toolkit.getDefaultToolkit().getImage("explosion.png");
+        theDuck = new Duck(400, 300, 3, -4, DuckPic);
         button1 = new Button(300, 300, 150, 60, "Reset Timer");
-        System.out.println("DONE");
+        ducks = new Duck[10];
+        for(int i=0; i<ducks.length; i++) {
+            ducks[i] = new Duck((int) (Math.random()*100), (int)(Math.random()*100), (int)(Math.random()*10), -4, DuckPic);
+        }
 
     }// BasicGameApp()
+    public void moveThings() {
+        theDuck.move();
+        for(int i=0; i< ducks.length;i++){
+            ducks[i].move();
+        }
+    }
 
 
     //*******************************************************************************
@@ -133,28 +161,59 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
     private void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("TimesRoman", Font.BOLD, 25));
-        g.drawString("Mouse and Time Example", 100, 50);
-        g.drawString("Mouse Cursor is at  " + mouseX + ",  " + mouseY, 100, 150);
+       // g.setColor(Color.BLACK);
+        //g.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        //g.drawString("Mouse and Time Example", 100, 50);
+       // g.drawString("Mouse Cursor is at  " + mouseX + ",  " + mouseY, 100, 150);
+
+       g.drawImage(backgroundpic,0,0,WIDTH,HEIGHT,null);
+        for(int i=0; i< ducks.length;i++) {
+            if (ducks[i].isAlive == false) {
+                //theDuck.hasExploded = true;
+                ducks[i].dx = 0;
+                ducks[i].dy = 0;
+                ducks[i].currentTime = System.currentTimeMillis();
+                ducks[i].elapsedTime = ducks[i].currentTime - ducks[i].startTime;
+
+
+                if (ducks[i].elapsedTime < 200) {
+                    g.drawImage(explosionPic, ducks[i].xpos, ducks[i].ypos, ducks[i].width, ducks[i].height, null);
+                }
+                
+
+            } else {
+                g.drawImage(ducks[i].pic, ducks[i].xpos, ducks[i].ypos, ducks[i].width, ducks[i].height, null);
+            }
+        }
+
+//       for(int i=0; i< ducks.length;i++){
+//           g.drawImage(ducks[i].pic, ducks[i].xpos, ducks[i].ypos, ducks[i].width, ducks[i].height, null);
+//       }
+
 
         //button
-        g.setColor(Color.YELLOW);
-        g.fillRect(button1.xpos, button1.ypos, button1.width, button1.height);
-        g.setColor(Color.BLACK);
-        g.drawString(button1.text, button1.xpos + 5, button1.ypos + 40);
+//        g.setColor(Color.YELLOW);
+//        g.fillRect(button1.xpos, button1.ypos, button1.width, button1.height);
+//        g.setColor(Color.BLACK);
+//        g.drawString(button1.text, button1.xpos + 5, button1.ypos + 40);
 
         //time
-        g.drawString(elapsedTime+"",70,340);
+        g.drawString(amountClicked+"",10,50);
+
+        if (amountClicked > 12){
+            endgamepic = Toolkit.getDefaultToolkit().getImage("endgamebackground.jpeg");
+        }
 
 
         g.dispose();
         bufferStrategy.show();
     }
 
+
     // main thread
     // this is the code that plays the game after you set things up
     public void run() {
+
 
         while (true) {
 
@@ -163,7 +222,7 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
 
             //calculate the elapsed time
             elapsedTime = currentTime-startTime;
-
+moveThings();
             render();  // paint the graphics
             pause(10); // sleep for 10 ms
         }
@@ -177,31 +236,41 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
 
         }
     }
+public void explosion(){
 
+        while (theDuck.counterOn=true){
+            System.out.println("this worked");
+            theDuck.counter=theDuck.counter+1;
+        }
+        if (theDuck.counter > 1){
+            System.out.println("this worked");
+        }
+
+    }
 
     //*******************************************************************************
 
     // REQUIRED KEYBOARD METHODS
     public void keyPressed(KeyEvent e) {
         char key = e.getKeyChar();
-        System.out.println("Key Pressed: " + key);
+        //System.out.println("Key Pressed: " + key);
 
         if (key == 'd') {
-            System.out.println("Yeah");
+            //System.out.println("Yeah");
         }
     }
 
     public void keyReleased(KeyEvent e) {
         char key = e.getKeyChar();
-        System.out.println("Key Released: " + key);
+        //System.out.println("Key Released: " + key);
 
     }
 
     public void keyTyped(KeyEvent e) {
         // The getKeyModifiers method is a handy //way to get a String
         // representing the //modifier key.
-        System.out.println("Key Typed: " + e.getKeyChar() + " "
-                + KeyEvent.getKeyModifiersText(e.getModifiers()) + "\n");
+        //System.out.println("Key Typed: " + e.getKeyChar() + " "
+               // + KeyEvent.getKeyModifiersText(e.getModifiers()) + "\n");
     }
     //*******************************************************************************
 
@@ -209,55 +278,64 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
     @Override
     public void mouseClicked(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
         int x, y;
         x = e.getX();
         y = e.getY();
 
         mouseX = x;
         mouseY = y;
-        System.out.println();
-        System.out.println("Mouse Clicked at " + x + ", " + y);
+        //System.out.println();
+        //System.out.println("Mouse Clicked at " + x + ", " + y);
 
-        if (button1.rec.contains(x, y)) {
-            System.out.println("TIMER STARTED");
-            startTime = System.currentTimeMillis();
-            startTimer = true;
+        for (int i = 0; i < ducks.length; i++) {
+            ducks[i].counterOn = true;
+            //explosion();
+            System.out.println("this worked");
+            ducks[i].counter = ducks[i].counter + 1;
+
+            if (ducks[i].rec.contains(x, y)) {
+                System.out.println("hello");
+                amountClicked += 1;
+                ducks[i].isAlive = false;
+                ducks[i].startTime = System.currentTimeMillis();
+
+            }
+
         }
-
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse Button Pressed");
-    }
 
     @Override
     public void mouseReleased(MouseEvent e) {
 
 
-        System.out.println();
-        System.out.println("Mouse Button Released");
+        //System.out.println();
+        //System.out.println("Mouse Button Released");
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse has entered the window");
+        //System.out.println();
+        //System.out.println("Mouse has entered the window");
 
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse has left the window");
+        //System.out.println();
+        //System.out.println("Mouse has left the window");
 
     }
 
     // REQUIRED Mouse Listener methods
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println("Mouse is being dragged");
+        //System.out.println("Mouse is being dragged");
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -267,8 +345,8 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
         y = e.getY();
         mouseX = x;
         mouseY = y;
-        System.out.println("Mouse moving");
-        System.out.println("Mouse is at  " + x + ", " + y);
+        //System.out.println("Mouse moving");
+        //System.out.println("Mouse is at  " + x + ", " + y);
 
     }
 
