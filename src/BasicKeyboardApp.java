@@ -178,6 +178,8 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
 
                 if (ducks[i].elapsedTime < 200) {
                     g.drawImage(explosionPic, ducks[i].xpos, ducks[i].ypos, ducks[i].width, ducks[i].height, null);
+                } else{
+                   ducks[i].dx = 20000;
                 }
                 
 
@@ -199,12 +201,7 @@ public class BasicKeyboardApp implements MouseListener, MouseMotionListener, Key
 
         //time
         g.drawString(amountClicked+"",10,50);
-
-        if (amountClicked > 12){
-            endgamepic = Toolkit.getDefaultToolkit().getImage("endgamebackground.jpeg");
-        }
-
-
+        
         g.dispose();
         bufferStrategy.show();
     }
